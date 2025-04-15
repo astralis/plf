@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Microsoft Lists Data</title>
+  <script src="https://alcdn.msauth.net/browser/2.15.0/js/msal-browser.min.js"></script>
+</head>
+<body>
+  <div id="listData"></div>
+
+  <script>
+    const msalConfig = {
+      auth: {
+        clientId: "your-client-id",
+        authority: "https://login.microsoftonline.com/your-tenant-id",
+        redirectUri: "your-redirect-uri"
+      }
+    };
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    const loginRequest = {
+      scopes: ["https://graph.microsoft.com/.default"]
+    };
+
+    msalInstance.loginPopup(loginRequest)
+      .then(response => {
+        const accessToken = response.accessToken;
+        fetchListData(accessToken);
+      })
+      .catch(error => {
+        console.error('Login error:', error);
+      });
+
+    function fetchListData(accessToken) {
+      const siteUrl = "https://your-sharepoint-site-url";
+      const listTitle = "Your List Title";
+
+      fetch(`${siteUrl}/_api/web/lists/GetByTitle('${listTitle}')/items`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+          "Accept": "application/json;odata=verbose"
+        }
+      })
+      .then(response => response.json())
+      .then(data => displayData(data))
+      .catch(error => console.error('Error fetching list:', error));
+    }
+
+    function displayData(data) {
+      const listDataDiv = document.getElementById('listData');
+      data.value.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.textContent = item.Title; // Adjust based on your list's fields
+        listDataDiv.appendChild(itemDiv);
+      });
+    }
+  </script>
+</body>
+</html>
