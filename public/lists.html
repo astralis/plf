@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Lists Data</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Microsoft Lists Data</h1>
+    <p><a href="/">Back to Home</a></p>
+    <table id="lists-table">
+        <thead>
+            <tr id="table-header"></tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+    <script>
+        async function fetchListsData() {
+            try {
+                const response = await fetch('/api/lists').catch(() => fetch('/data/lists.json'));
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                const tableHeader = document.getElementById('table-header');
+                const tableBody = document.getElementById('table-body');
+                if (data.length > 0) {
+                    const columns = Object.keys(data[0].fields).filter(col => col !== 'id');
+                    tableHeader.innerHTML = columns.map(col => `<th>${col}</th>`).join('');
+                    tableBody.innerHTML = data.map(item => `
+                        <tr>
+                            ${columns.map(col => `<td>${item.fields[col] || ''}</td>`).join('')}
+                        </tr>
+                    `).join('');
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="100">No data found</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error fetching lists:', error);
+                tableBody.innerHTML = '<tr><td colspan="100">Error loading data</td></tr>';
+            }
+        }
+        fetchListsData();
+    </script>
+</body>
+</html>
