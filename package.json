@@ -10,7 +10,10 @@
     "node": "22.x"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
+    "isomorphic-fetch": "^3.0.0",
+    "@azure/identity": "^4.4.1"
   },
   "author": "",
   "license": "ISC"
