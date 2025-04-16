@@ -7,23 +7,47 @@ body {
 }
 
 h1 {
-    color: #0078d4; /* Azure-inspired blue */
+    color: #0078d4;
 }
 
-button {
+button, a {
     padding: 10px 20px;
     background-color: #0078d4;
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px;
 }
 
-button:hover {
+button:hover, a:hover {
     background-color: #005ba1;
 }
 
 #api-response {
     margin-top: 20px;
     font-weight: bold;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #0078d4;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
 }
