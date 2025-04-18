@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
+const { mkdir } = require('fs').promises; // Add mkdir
 require('isomorphic-fetch');
 const { Client } = require('@microsoft/microsoft-graph-client');
 const { ClientSecretCredential } = require('@azure/identity');
@@ -36,8 +37,16 @@ app.get('/api/lists', async (req, res) => {
         const fetchedItems = items.value || [];
         console.log(`Fetched ${fetchedItems.length} items, latest ID: ${fetchedItems[0]?.fields?.ID}, Created: ${fetchedItems[0]?.fields?.Created}`);
         
+        // Create /data directory if it doesn't exist
+        const dataDir = path.join(__dirname, 'data');
+        try {
+            await mkdir(dataDir, { recursive: true });
+        } catch (err) {
+            if (err.code !== 'EEXIST') throw err;
+        }
+        
         await fs.writeFile(
-            path.join(__dirname, 'data', 'lists.json'),
+            path.join(dataDir, 'lists.json'),
             JSON.stringify(fetchedItems, null, 2),
             'utf8'
         );
