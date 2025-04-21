@@ -1,0 +1,38 @@
+const express = require('express');
+const path = require('path');
+const { syncAllData } = require('./syncShareData');
+const app = express();
+
+app.get('/sync', async (req, res) => {
+  try {
+    await syncAllData();
+    res.json({ message: 'Sync completed successfully' });
+  } catch (error) {
+    console.error('Sync error:', error.message, error.stack);
+    res.status(500).json({ error: 'Failed to sync data', details: error.message });
+  }
+});
+
+app.get('/data/index', (req, res) => {
+  res.sendFile(path.join(__dirname, 'list_data_index.json'), (err) => {
+    if (err) {
+      console.error('Error serving index:', err);
+      res.status(404).json({ error: 'Index file not found' });
+    }
+  });
+});
+
+app.get('/data/:yearMonth', (req, res) => {
+  const file = path.join(__dirname, 'data', `${req.params.yearMonth}.json`);
+  res.sendFile(file, (err) => {
+    if (err) {
+      console.error('Error serving file:', err);
+      res.status(404).json({ error: 'File not found' });
+    }
+  });
+});
+
+const port = process.env.SYNC_PORT || 4000; // Different port from index.js
+app.listen(port, () => {
+  console.log(`Sync server running on port ${port}`);
+});
